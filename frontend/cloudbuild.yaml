@@ -1,0 +1,15 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/sipm-prod/sipm-frontend', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/sipm-prod/sipm-frontend']
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run', 
+      'deploy', 
+      'sipm-frontend', 
+      '--image', 'gcr.io/sipm-prod/sipm-frontend', 
+      '--platform', 'managed', 
+      '--region', 'us-central1', 
+      '--allow-unauthenticated'
+    ]

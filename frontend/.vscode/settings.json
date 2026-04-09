@@ -1,0 +1,4 @@
+{
+  "cloudcode.autoDependencies": "off",
+  "npm.packageManager": "yarn"
+}

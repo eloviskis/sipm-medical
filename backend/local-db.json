@@ -1,0 +1,228 @@
+{
+  "users": [
+    {
+      "_id": "admin-001",
+      "name": "Admin SIPM",
+      "email": "admin@sipm.com",
+      "role": "Admin",
+      "cnpj": "",
+      "cpf": "000.000.000-00",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "medico-001",
+      "name": "Dra. Maria Silva",
+      "email": "maria@sipm.com",
+      "role": "Medico",
+      "cpf": "111.111.111-11",
+      "crm": "CRM/SP 123456",
+      "specialty": "Cardiologia",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "paciente-001",
+      "name": "João Santos",
+      "email": "joao@email.com",
+      "role": "Paciente",
+      "cpf": "222.222.222-22",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "_authUsers": [
+    {
+      "uid": "admin-001",
+      "email": "admin@sipm.com",
+      "password": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
+      "displayName": "Admin SIPM",
+      "providerData": [
+        {
+          "providerId": "password"
+        }
+      ]
+    },
+    {
+      "uid": "medico-001",
+      "email": "maria@sipm.com",
+      "password": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
+      "displayName": "Dra. Maria Silva",
+      "providerData": [
+        {
+          "providerId": "password"
+        }
+      ]
+    },
+    {
+      "uid": "paciente-001",
+      "email": "joao@email.com",
+      "password": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
+      "displayName": "João Santos",
+      "providerData": [
+        {
+          "providerId": "password"
+        }
+      ]
+    }
+  ],
+  "appointments": [
+    {
+      "_id": "apt-001",
+      "date": "2024-03-15T10:00:00.000Z",
+      "notes": "Consulta de rotina",
+      "userId": "paciente-001",
+      "doctorId": "medico-001",
+      "status": "scheduled",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "clinics": [
+    {
+      "_id": "clinic-001",
+      "name": "Clínica SIPM",
+      "address": "Rua Exemplo, 123",
+      "phone": "(11) 99999-9999",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "services": [
+    {
+      "_id": "srv-001",
+      "name": "Consulta Cardiológica",
+      "description": "Avaliação cardiológica completa",
+      "price": 250,
+      "duration": 60,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "srv-002",
+      "name": "Eletrocardiograma",
+      "description": "Exame de ECG",
+      "price": 150,
+      "duration": 30,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "motivos": [
+    {
+      "_id": "mot-001",
+      "name": "Dor no peito",
+      "description": "Dor ou desconforto torácico",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "mot-002",
+      "name": "Check-up",
+      "description": "Avaliação médica de rotina",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "documentTemplates": [
+    {
+      "_id": "tpl-001",
+      "name": "Atestado Médico",
+      "content": "Atesto que o paciente {{nome}} esteve em consulta médica nesta data.",
+      "type": "atestado",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "tpl-002",
+      "name": "Receita Médica",
+      "content": "Prescrição para o paciente {{nome}}.",
+      "type": "receita",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "patientRecords": [
+    {
+      "_id": "rec-001",
+      "patientId": "paciente-001",
+      "doctorId": "medico-001",
+      "diagnosis": "Hipertensão arterial leve",
+      "notes": "Paciente apresentou pressão arterial elevada. Orientado sobre mudança de hábitos.",
+      "prescriptions": [
+        "Losartana 50mg 1x/dia"
+      ],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "messages": [
+    {
+      "_id": "msg-001",
+      "senderId": "medico-001",
+      "receiverId": "paciente-001",
+      "content": "Bom dia João, lembre-se da sua consulta amanhã.",
+      "read": false,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "notifications": [
+    {
+      "_id": "notif-001",
+      "userId": "paciente-001",
+      "message": "Você tem uma consulta agendada para amanhã.",
+      "read": false,
+      "type": "appointment",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "payments": [
+    {
+      "_id": "pay-001",
+      "appointmentId": "apt-001",
+      "patientId": "paciente-001",
+      "amount": 250,
+      "status": "pending",
+      "method": "pix",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "preConsultations": [],
+  "accountsReceivable": [],
+  "accountsPayable": [],
+  "reports": [],
+  "invoices": [],
+  "themes": [],
+  "themePreferences": [],
+  "pages": [],
+  "files": [],
+  "whatsapp": [],
+  "profiles": [],
+  "feedItems": [],
+  "homePageContent": [
+    {
+      "_id": "home-001",
+      "title": "SIPM - Sistema Integrado de Prontuário Médico",
+      "subtitle": "Gestão completa para sua clínica",
+      "features": [
+        {
+          "title": "Prontuário Eletrônico",
+          "description": "Gestão completa de prontuários médicos digitais"
+        },
+        {
+          "title": "Agendamento Online",
+          "description": "Sistema de agendamento integrado"
+        },
+        {
+          "title": "Telemedicina",
+          "description": "Consultas online com segurança"
+        },
+        {
+          "title": "Relatórios",
+          "description": "Relatórios detalhados e dashboards"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "_id": "customization",
+      "clinicName": "SIPM Clínica",
+      "primaryColor": "#1976d2",
+      "secondaryColor": "#dc004e"
+    }
+  ],
+  "passwordResetTokens": [],
+  "permissions": []
+}

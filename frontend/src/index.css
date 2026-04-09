@@ -1,0 +1,42 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+.fc-button.fc-today-button {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+  color: white !important;
+}
+.fc-toolbar .fc-button {
+  background-color: #1976d2; /* Cor azul padrão */
+  color: white; /* Cor do texto */
+  border: none;
+  transition: background-color 0.3s ease; /* Suave transição de cor */
+}
+
+.fc-toolbar .fc-button:hover {
+  background-color: rgba(255, 255, 255, 0.3); /* Máscara branca */
+  color: white; /* Mantém o texto branco */
+}
+
+.fc-toolbar .fc-button.fc-button-active {
+  background-color: #1976d2; /* Mantém a cor padrão quando o botão está ativo */
+  color: white;
+}
+
+.fc-toolbar-title {
+  color: #1976d2; /* Cor para o título do mês/ano */
+}
