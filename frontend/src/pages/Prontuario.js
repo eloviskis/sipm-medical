@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -15,32 +15,59 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Download as DownloadIcon,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserInfoDisplay from "../components/UserInfoDisplay";
 import jsPDF from "jspdf";
 import logo from "../assets/images/logohome.png";
-import FeedHistorico from "../components/FeedHistorico"; // Importando o componente FeedHistorico
+import FeedHistorico from "../components/FeedHistorico";
+import api from "../store/axiosConfig";
 
 
 const Prontuario = () => {
   const navigate = useNavigate();
+  const { patientId } = useParams();
 
-  // Definindo o estado para aba ativa
-  const [abaAtiva, setAbaAtiva] = useState(0); // Corrigido: definindo o estado de abaAtiva
+  const [loading, setLoading] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(""); // "salvando" | "salvo" | "erro"
+  const [paciente, setPaciente] = useState(null);
 
-  // Dados fictícios de um paciente para teste com o novo avatar
+  // Carregar dados reais do paciente quando patientId estiver disponível
+  useEffect(() => {
+    if (!patientId) return;
+    setLoading(true);
+    api.get(`/patient-records/${patientId}`)
+      .then(res => {
+        if (res.data) {
+          setPaciente(res.data);
+          // Pré-popular campos SOAP se já existirem
+          if (res.data.soap) {
+            setSubjetivo(res.data.soap.subjetivo || "");
+            setObjetivo(res.data.soap.objetivo || "");
+            setAvaliacao(res.data.soap.avaliacao || "");
+            setPlano(res.data.soap.plano || "");
+          }
+          if (res.data.prescriptions) setMedicamentos(res.data.prescriptions);
+        }
+      })
+      .catch(err => console.error("Erro ao carregar prontuário:", err))
+      .finally(() => setLoading(false));
+  }, [patientId]);
+
+  // Fallback com dados fictícios quando não há patientId
   const pacienteFicticio = {
     nome: "Maria de Souza",
     email: "maria.souza@exemplo.com",
     celular: "5511998765432",
     telefone: "5511987654321",
-    avatarUrl: "/src/assets/images/pacienttAvatar.png", // Caminho da imagem do avatar do paciente
+    avatarUrl: "/src/assets/images/pacienttAvatar.png",
     medicoResponsavel: "Dr. João Silva",
     cpf: "123.456.789-00",
     endereco: "Rua dos Pacientes, 123",
@@ -50,6 +77,8 @@ const Prontuario = () => {
     pessoaResponsavel: "José de Souza",
     tipoUsuario: "paciente",
   };
+
+  const pacienteExibido = paciente || pacienteFicticio;
 
   const medicoFicticio = {
     nome: "Dr. João Silva",
@@ -71,6 +100,9 @@ const Prontuario = () => {
     },
     { descricao: "Paciente submetido a ultrassom abdominal", data: "10/09/2023" },
   ]);
+
+  // Definindo o estado para aba ativa
+  const [abaAtiva, setAbaAtiva] = useState(0);
 
   const [subjetivo, setSubjetivo] = useState("");
   const [objetivo, setObjetivo] = useState("");
@@ -193,7 +225,7 @@ const Prontuario = () => {
     doc.setFontSize(14);
     doc.text(`Prescrição Médica`, 20, 60);
     doc.setFontSize(12);
-    doc.text(`Para: ${pacienteFicticio.nome}`, 20, 70);
+    doc.text(`Para: ${pacienteExibido.nome}`, 20, 70);
 
     medicamentos.forEach((med, index) => {
       doc.text(
@@ -221,11 +253,23 @@ const Prontuario = () => {
     setAbaAtiva(novaAba);
   };
 
-  const handleSaveSOAP = () => {
+  const handleSaveSOAP = async () => {
     adicionarAoHistorico(
       `SOAP Atualizado: Subjetivo: ${subjetivo}, Objetivo: ${objetivo}, Avaliação: ${avaliacao}, Plano: ${plano}`
     );
-    alert("Dados SOAP salvos e histórico atualizado!");
+    if (patientId) {
+      setSaveStatus("salvando");
+      try {
+        await api.patch(`/patient-records/${patientId}`, {
+          soap: { subjetivo, objetivo, avaliacao, plano },
+        });
+        setSaveStatus("salvo");
+        setTimeout(() => setSaveStatus(""), 3000);
+      } catch (err) {
+        console.error("Erro ao salvar SOAP:", err);
+        setSaveStatus("erro");
+      }
+    }
   };
 
   const handleClearSOAP = () => {
@@ -247,9 +291,12 @@ const Prontuario = () => {
             Voltar
           </Button>
         </Box>
+        {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
+        {saveStatus === 'salvo' && <Alert severity="success" sx={{ mb: 2 }}>SOAP salvo com sucesso!</Alert>}
+        {saveStatus === 'erro' && <Alert severity="error" sx={{ mb: 2 }}>Erro ao salvar SOAP. Tente novamente.</Alert>}
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            <UserInfoDisplay userData={pacienteFicticio} />
+            <UserInfoDisplay userData={pacienteExibido} />
           </Grid>
           <Grid item xs={12} md={8}>
             <Paper sx={{ padding: 2 }}>

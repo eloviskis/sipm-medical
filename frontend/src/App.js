@@ -34,6 +34,7 @@ const Contato = lazy(() => import("./pages/Contato"));
 const QuemSomos = lazy(() => import("./pages/QuemSomos"));
 const Pacientes = lazy(() => import("./pages/Pacientes"));
 const EditarPerfil = lazy(() => import("./components/EditarPerfil"));
+const PortalPaciente = lazy(() => import("./pages/PortalPaciente"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const PageLoader = () => (
@@ -105,11 +106,12 @@ function App() {
               <Route path="/editar/:id" element={<EditarPerfil />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/pacientes" element={<Pacientes />} />
+              <Route path="/portal-paciente" element={<PortalPaciente />} />
             </Route>
 
             {/* Medico, admin, secretaria */}
             <Route element={<PrivateRoute roles={["admin","medico","secretaria"]}><DashboardLayout /></PrivateRoute>}>
-              <Route path="/prontuario" element={<Prontuario />} />
+              <Route path="/prontuario/:patientId?" element={<Prontuario />} />
               <Route path="/appointment" element={<Appointment />} />
               <Route path="/pre-consultations" element={<PreConsultations />} />
               <Route path="/accounts-receivable" element={<AccountsReceivable />} />

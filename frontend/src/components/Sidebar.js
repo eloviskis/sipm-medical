@@ -84,21 +84,19 @@ const Sidebar = ({ isOpen = false, toggleSidebar }) => {
           {/* Navegação padrão */}
           {[
             { text: "Início", to: "/" },
-            { text: "Agenda", to: "/Appointment" },
+            { text: "Agenda", to: "/appointment" },
             { text: "Pacientes", to: "/pacientes" },
             { text: "Prontuário", to: "/prontuario" },
+            { text: "Portal do Paciente", to: "/portal-paciente" },
             { text: "Pré-Consultas", to: "/pre-consultations" },
             { text: "Documentos", to: "/document-templates" },
             { text: "Mensagens", to: "/messaging" },
             { text: "Motivos", to: "/motivos" },
             { text: "Notificações", to: "/notifications" },
-            { text: "Pagamentos", to: "/payment" },
             { text: "Contas a receber", to: "/accounts-receivable" },
             { text: "Contas a pagar", to: "/accounts-payable" },
-            { text: "Relatórios", to: "/report" },
             { text: "Serviços", to: "/services" },
             { text: "Telemedicina", to: "/telemedicina" },
-            { text: "WhatsApp", to: "/whatsapp" },
           ].map((item, index) => (
             <ListItem button component={Link} to={item.to} key={index}>
               <ListItemText primary={item.text} />

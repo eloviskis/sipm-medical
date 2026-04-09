@@ -18,7 +18,7 @@ import {
     FormControlLabel,
     Container,
 } from '@mui/material';
-import { Add as AddIcon, Email as EmailIcon, WhatsApp as WhatsAppIcon, Edit as EditIcon, Payment as PaymentIcon, Search as SearchIcon, FileDownload as ExportIcon, Videocam as GoogleMeetIcon } from '@mui/icons-material';
+import { Add as AddIcon, Email as EmailIcon, WhatsApp as WhatsAppIcon, Edit as EditIcon, Payment as PaymentIcon, Search as SearchIcon, FileDownload as ExportIcon, Videocam as GoogleMeetIcon, MedicalServices as MedicalIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import api from '../store/axiosConfig';
@@ -231,6 +231,14 @@ const Pacientes = () => {
                                                 >
                                                     <EditIcon />
                                                 </IconButton>
+                                                <Tooltip title="Ver Prontuário">
+                                                  <IconButton
+                                                    color="secondary"
+                                                    onClick={() => navigate(`/prontuario/${patient.id}`)}
+                                                  >
+                                                    <MedicalIcon />
+                                                  </IconButton>
+                                                </Tooltip>
                                                 {patient.hasDebt && (
                                                     <IconButton color="error">
                                                         <PaymentIcon />

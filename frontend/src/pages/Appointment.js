@@ -66,6 +66,18 @@ const Appointment = () => {
   const [newPatientModalOpen, setNewPatientModalOpen] = useState(false);
 
   useEffect(() => {
+    // Carregar consultas existentes do backend
+    api.get('/appointments')
+      .then(res => {
+        const loaded = (res.data || []).map((ev: any) => ({
+          ...ev,
+          start: new Date(ev.start),
+          end: new Date(ev.end),
+        }));
+        setEvents(loaded);
+      })
+      .catch(() => {});
+
     api.get('/patient-records')
       .then(res => setPatients(res.data || []))
       .catch(() => setPatients([]));
@@ -229,9 +241,27 @@ const Appointment = () => {
     }
   };
 
-  const handleEventSave = () => {
+  // Verificar conflitos de horário
+  const hasConflict = (start, end, excludeId) => {
+    return events.some(ev => {
+      if (ev.id === excludeId || ev.isBlocked) return false;
+      const evStart = new Date(ev.start);
+      const evEnd = new Date(ev.end);
+      return start < evEnd && end > evStart;
+    });
+  };
+
+  const handleEventSave = async () => {
     if (newEvent.isBlocked && !newEvent.justification) {
       alert('Por favor, forneça uma justificativa para o bloqueio.');
+      return;
+    }
+
+    // Verificar conflito de horário
+    const startDt = moment.isMoment(newEvent.start) ? newEvent.start.toDate() : new Date(newEvent.start);
+    const endDt   = moment.isMoment(newEvent.end)   ? newEvent.end.toDate()   : new Date(newEvent.end);
+    if (!newEvent.isBlocked && hasConflict(startDt, endDt, editingEventId)) {
+      alert('Já existe uma consulta agendada nesse horário. Por favor, escolha outro horário.');
       return;
     }
 
@@ -249,10 +279,44 @@ const Appointment = () => {
 
     let newEvents = createRecurringEvents(eventData);
 
-    if (editingEventId) {
-      setEvents((prevEvents) =>
-        prevEvents.filter((ev) => !ev.id.startsWith(editingEventId.split('-')[0]))
-      );
+    try {
+      if (editingEventId) {
+        // Atualizar no backend
+        await api.patch(`/appointments/${editingEventId}`, {
+          ...eventData,
+          start: startDt.toISOString(),
+          end: endDt.toISOString(),
+        });
+        setEvents((prevEvents) =>
+          prevEvents.filter((ev) => !ev.id.startsWith(editingEventId.split('-')[0]))
+        );
+      } else {
+        // Criar no backend (pega o primeiro evento da lista recorrente)
+        const payload = {
+          ...newEvents[0],
+          start: startDt.toISOString(),
+          end: endDt.toISOString(),
+          status: 'agendado',
+          createdAt: new Date().toISOString(),
+        };
+        const res = await api.post('/appointments', payload);
+        if (res.data?.id) {
+          newEvents = newEvents.map((ev, i) => ({ ...ev, id: i === 0 ? res.data.id : ev.id }));
+        }
+
+        // Notificação WhatsApp automática
+        const selectedPatient = patients.find(p => p.nome === newEvent.patient || p.name === newEvent.patient);
+        const phone = selectedPatient?.celular || selectedPatient?.telefone || selectedPatient?.phone;
+        if (phone && !newEvent.isBlocked) {
+          const formattedDate = moment(startDt).format('DD/MM/YYYY [às] HH:mm');
+          api.post('/whatsapp/send', {
+            to: phone,
+            message: `Olá ${newEvent.patient || 'paciente'}, sua consulta foi confirmada para ${formattedDate}. Até lá!`,
+          }).catch(err => console.error('Erro ao enviar WhatsApp:', err));
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao salvar consulta:', err);
     }
 
     setEvents((prevEvents) => [...prevEvents, ...newEvents]);
@@ -274,7 +338,14 @@ const Appointment = () => {
     setEditingEventId(null);
   };
 
-  const handleDeleteEvent = () => {
+  const handleDeleteEvent = async () => {
+    try {
+      if (editingEventId) {
+        await api.delete(`/appointments/${editingEventId}`);
+      }
+    } catch (err) {
+      console.error('Erro ao excluir consulta:', err);
+    }
     setEvents((prevEvents) => prevEvents.filter((event) => event.id !== editingEventId));
     setDeleteDialogOpen(false);
     setModalOpen(false);
