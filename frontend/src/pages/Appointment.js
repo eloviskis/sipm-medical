@@ -33,8 +33,6 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { SketchPicker } from 'react-color';
 import EditIcon from '@mui/icons-material/Edit';
 import api from '../store/axiosConfig';
-import NavbarLogin from '../components/NavbarLogin';
-import Sidebar from '../components/Sidebar';
 
 
 
@@ -44,7 +42,6 @@ const Appointment = () => {
   const [events, setEvents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: 'Nova Consulta',
     start: '',
@@ -335,9 +332,6 @@ const Appointment = () => {
     setNewEvent({ ...newEvent, recurrenceType: event.target.value });
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
   const handleEventDrop = (info) => {
     const updatedEvents = events.map((event) => {
       if (event.id === info.event.id) {
@@ -357,9 +351,6 @@ const Appointment = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <NavbarLogin />
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-
       <div style={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
         <div
           style={{

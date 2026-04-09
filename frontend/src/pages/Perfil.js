@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom"; // Importando usePara
 import ProfileForm from "../components/ProfileForm"; // Componente para pacientes
 import ProfileFormMed from "../components/ProfileFormMed"; // Componente para médicos
 import UserInfoDisplay from "../components/UserInfoDisplay";
-import NavbarLogin from "../components/NavbarLogin";
 import api from "../store/axiosConfig";
 
 const Perfil = () => {
@@ -49,7 +48,6 @@ const Perfil = () => {
 
   return (
     <>
-      <NavbarLogin />
       <Container>
         <Box sx={{ mt: 4, mb: 2 }}>
           {/* Botão de voltar */}

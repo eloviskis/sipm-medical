@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import app from "../config/firebase.config";
 import {
   Container,
   Typography,
@@ -9,10 +7,7 @@ import {
   ListItemText,
   CircularProgress,
 } from "@mui/material";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-
-const db = getFirestore(app);
+import api from "../store/axiosConfig";
 
 const AccountsReceivable = () => {
   const [accountsReceivable, setAccountsReceivable] = useState([]);
@@ -21,17 +16,11 @@ const AccountsReceivable = () => {
   useEffect(() => {
     const fetchAccountsReceivable = async () => {
       try {
-        const querySnapshot = await getDocs(
-          collection(db, "accounts-receivable")
-        );
-        const accountsData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setAccountsReceivable(accountsData);
-        setLoading(false);
+        const res = await api.get('/accounts-receivable');
+        setAccountsReceivable(res.data);
       } catch (error) {
         console.error("Erro ao buscar contas a receber:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -39,14 +28,10 @@ const AccountsReceivable = () => {
   }, []);
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 ml-64">
-        <Header />
-        <Container>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Contas a Receber
-          </Typography>
+    <Container>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Contas a Receber
+      </Typography>
           {loading ? (
             <CircularProgress />
           ) : (
@@ -69,9 +54,7 @@ const AccountsReceivable = () => {
               )}
             </div>
           )}
-        </Container>
-      </div>
-    </div>
+    </Container>
   );
 };
 

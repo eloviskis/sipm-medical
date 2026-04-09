@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Box, Typography, TextField, MenuItem, Button, CircularProgress } from "@mui/material";
 import { Videocam as GoogleMeetIcon, ContentCopy as CopyIcon, WhatsApp as WhatsAppIcon } from "@mui/icons-material";
-import NavbarLogin from "../components/NavbarLogin"; // Corrigindo o caminho da importação
 import { useNavigate } from "react-router-dom";
 
 // Pacientes fictícios para teste
@@ -96,8 +95,6 @@ const TelemedicinaPage = () => {
 
     return (
         <>
-            <NavbarLogin /> {/* Navbar adicionada no topo */}
-
             {/* Botão de voltar fixado e alinhado responsivamente acima da box */}
             <Box
                 sx={{

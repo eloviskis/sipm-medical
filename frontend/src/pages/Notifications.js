@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Box, Paper, List, ListItem, ListItemText, Typography, IconButton, Container, Badge } from "@mui/material";
 import { Delete as DeleteIcon, Archive as ArchiveIcon, Check as CheckIcon, Restore as RestoreIcon, ArrowBack as ArrowBackIcon, Work as WorkIcon, DeleteForever as TrashIcon, Settings as SettingsIcon } from "@mui/icons-material";
-import Sidebar from "../components/Sidebar";
-import NavbarLogin from "../components/NavbarLogin";
-import NotificationSettings from "../components/NotificationSettings"; // Importando o componente de configurações
+import NotificationSettings from "../components/NotificationSettings";
 
 // Dados fictícios para teste
 const mockNotifications = [
@@ -39,12 +37,7 @@ const NotificationsPage = () => {
   const [deletedNotifications, setDeletedNotifications] = useState([]);
   const [showArchived, setShowArchived] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
-  const [showSettings, setShowSettings] = useState(false); // Controle para mostrar/ocultar configurações
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Adicionando controle de abertura da Sidebar
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen); // Função para alternar abertura/fechamento da Sidebar
-  };
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleArchive = (id) => {
     const notificationToArchive = notifications.find((notification) => notification.id === id);
@@ -80,24 +73,15 @@ const NotificationsPage = () => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      <Box sx={{ flexGrow: 1, ml: isSidebarOpen ? '240px' : '0' }}>
-        {/* Navbar */}
-        <NavbarLogin />
-
-        {/* Caixa de Notificações Centralizada */}
-        <Container sx={{ mt: 4 }}>
-          <Paper
-            sx={{
-              maxWidth: "800px",
-              margin: "0 auto",
-              padding: "24px",
-              boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.1)",
-            }}
-          >
+    <Container sx={{ mt: 4 }}>
+      <Paper
+        sx={{
+          maxWidth: "800px",
+          margin: "0 auto",
+          padding: "24px",
+          boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.1)",
+        }}
+      >
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <Typography variant="h4" gutterBottom align="center">
                 Notificações
@@ -282,10 +266,8 @@ const NotificationsPage = () => {
                 </List>
               </>
             )}
-          </Paper>
-        </Container>
-      </Box>
-    </Box>
+      </Paper>
+    </Container>
   );
 };
 

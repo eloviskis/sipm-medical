@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
-import { initializeApp } from "firebase/app";
 import {
   Container,
   Typography,
@@ -10,22 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-
-// Configuração do Firebase
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
-};
-
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import api from "../store/axiosConfig";
 
 const AdminHomePage = () => {
   const [content, setContent] = useState({
@@ -38,10 +21,13 @@ const AdminHomePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const docRef = doc(db, "homepage-content", "main");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setContent(docSnap.data());
+      try {
+        const res = await api.get('/home-page-content');
+        if (res.data) {
+          setContent(res.data);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar conteúdo da home:', error);
       }
     };
     fetchData();
@@ -76,8 +62,11 @@ const AdminHomePage = () => {
   };
 
   const handleSave = async () => {
-    const docRef = doc(db, "homepage-content", "main");
-    await setDoc(docRef, content);
+    try {
+      await api.post('/home-page-content', content);
+    } catch (error) {
+      console.error('Erro ao salvar conteúdo:', error);
+    }
   };
 
   return (

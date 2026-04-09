@@ -23,7 +23,6 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import UserInfoDisplay from "../components/UserInfoDisplay";
-import NavbarLogin from "../components/NavbarLogin";
 import jsPDF from "jspdf";
 import logo from "../assets/images/logohome.png";
 import FeedHistorico from "../components/FeedHistorico"; // Importando o componente FeedHistorico
@@ -238,7 +237,6 @@ const Prontuario = () => {
 
   return (
     <>
-      <NavbarLogin />
       <Container>
         <Box sx={{ mt: 4, mb: 2 }}>
           <Button

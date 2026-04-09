@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import NavbarLogin from "../components/NavbarLogin";
 import {
   Container,
   Box,
@@ -53,24 +51,9 @@ const pacientesEscala = [
 ];
 
 const PreConsultations = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
-    <div style={{ display: "flex" }}>
-      {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      <div style={{ flexGrow: 1, marginLeft: isSidebarOpen ? '240px' : '0', transition: 'margin-left 0.3s ease' }}>
-        {/* Navbar */}
-        <NavbarLogin />
-
-        {/* Conteúdo principal */}
-        <Container sx={{ paddingBlock: "20px" }}>
-          <Box sx={{ marginTop: 2 }}>
+    <Container sx={{ paddingBlock: "20px" }}>
+      <Box sx={{ marginTop: 2 }}>
             <Typography variant="h4">Pacientes e Escalas Respondidas</Typography>
             <Typography variant="body1" sx={{ marginTop: 2 }}>
               Lista de pacientes, especialidades, e se responderam às escalas médicas.
@@ -99,8 +82,6 @@ const PreConsultations = () => {
             </Paper>
           </Box>
         </Container>
-      </div>
-    </div>
   );
 };
 

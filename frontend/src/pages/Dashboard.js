@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../store/axiosConfig";
-import Sidebar from "../components/Sidebar";
-import NavbarLogin from "../components/NavbarLogin";
 import {
   Container,
   Typography,
@@ -42,10 +40,9 @@ import {
 ChartJS.register(BarElement, CategoryScale, LinearScale, ChartTooltip, Legend);
 
 const Dashboard = () => {
-  const navigate = useNavigate(); // Hook para navegação
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [period, setPeriod] = useState("7");
   const [stats, setStats] = useState({
     Atendidos: 0,
@@ -64,10 +61,6 @@ const Dashboard = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [pacientesDoDia, setPacientesDoDia] = useState([]);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
 
   const handlePeriodChange = (event) => {
     setPeriod(event.target.value);
@@ -111,16 +104,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div
-        className="flex-1"
-        style={{ insetInlineStart: isSidebarOpen ? "240px" : "0" }}
-
-      >
-        <NavbarLogin />
-        <Container maxWidth="lg" sx={{ marginBlockStart: 4 }}>
-          <Typography
+    <Container maxWidth="lg" sx={{ marginBlockStart: 4 }}>
+      <Typography
             variant="h4"
             component="h1"
             gutterBottom
@@ -473,8 +458,6 @@ const Dashboard = () => {
             </Grid>
           </Grid>
         </Container>
-      </div>
-    </div>
   );
 };
 

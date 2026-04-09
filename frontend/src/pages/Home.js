@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
 import {
   Container,
   Box,
@@ -26,10 +25,7 @@ import {
 } from "@mui/icons-material"; // Importando ícones de redes sociais e relevantes
 
 // Importando a imagem localmente
-import heroImage from "../assets/images/medica-hero.jpg"; // Caminho relativo para a imagem
-
-// Configuração do Firebase
-const db = getFirestore(appFirebase);
+import heroImage from "../assets/images/medica-hero.jpg";
 
 const Home = () => {
   const [content, setContent] = useState({
@@ -43,12 +39,11 @@ const Home = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const docRef = doc(db, "homepage-content", "content");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
+        const res = await api.get('/home-page-content');
+        if (res.data) {
           setContent((prevContent) => ({
             ...prevContent,
-            ...docSnap.data(),
+            ...res.data,
           }));
         }
       } catch (error) {

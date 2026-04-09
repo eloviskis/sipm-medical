@@ -10,8 +10,6 @@ import {
   ListItemText,
   Paper,
 } from "@mui/material";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import appFirebase from "../config/firebase.config"; // Importa o appFirebase corretamente
 
 const Services = () => {
@@ -36,14 +34,10 @@ const Services = () => {
   }, [db]);
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 ml-64">
-        <Header />
-        <Container sx={{ py: 8 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Serviços
-          </Typography>
+    <Container sx={{ py: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Serviços
+      </Typography>
           <Paper sx={{ p: 4 }}>
             {services.length === 0 ? (
               <Typography variant="body1">
@@ -65,9 +59,7 @@ const Services = () => {
               </List>
             )}
           </Paper>
-        </Container>
-      </div>
-    </div>
+    </Container>
   );
 };
 

@@ -33,6 +33,7 @@ import profileRoutes from './routes/profileRoutes';
 
 // Importar o Firebase Admin SDK
 import admin from 'firebase-admin';
+import { errorHandler } from './middlewares/errorHandler';
 
 // Inicializar o Firebase Admin SDK
 try {
@@ -107,6 +108,14 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.get('/', (req, res) => {
     res.send('SIPM Backend - Local Development');
 });
+
+// 404 — rota não encontrada
+app.use('/api/', (req, res) => {
+    res.status(404).json({ error: 'Rota não encontrada' });
+});
+
+// Error handler global
+app.use(errorHandler);
 
 // Iniciando o servidor
 app.listen(port, () => {

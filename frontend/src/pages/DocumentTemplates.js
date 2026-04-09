@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import app from "../config/firebase.config";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import {
   Container,
   Typography,
@@ -12,8 +8,7 @@ import {
   Box,
   Alert,
 } from "@mui/material";
-
-const db = getFirestore(app);
+import api from "../store/axiosConfig";
 
 const DocumentTemplates = () => {
   const [templates, setTemplates] = useState([]);
@@ -22,14 +17,8 @@ const DocumentTemplates = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const querySnapshot = await getDocs(
-          collection(db, "document-templates")
-        );
-        const templatesData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setTemplates(templatesData);
+        const res = await api.get('/document-templates');
+        setTemplates(res.data);
       } catch (error) {
         setError("Erro ao buscar modelos de documentos.");
         console.error("Erro ao buscar modelos de documentos:", error);
@@ -39,14 +28,10 @@ const DocumentTemplates = () => {
   }, []);
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 ml-64">
-        <Header />
-        <Container maxWidth="md" sx={{ mt: 8 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Modelos de Documentos
-          </Typography>
+    <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Modelos de Documentos
+      </Typography>
           {error && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {error}
@@ -80,9 +65,7 @@ const DocumentTemplates = () => {
               </List>
             )}
           </Box>
-        </Container>
-      </div>
-    </div>
+    </Container>
   );
 };
 

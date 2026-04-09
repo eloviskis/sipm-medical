@@ -1,13 +1,14 @@
 import React from "react";
-import ReactDOM from "react-dom/client"; // Correção: importando de 'react-dom/client' para a versão mais recente
+import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-// import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
 import store from "./store/store";
+import { injectStore } from "./store/axiosInterceptors";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-// Correção: Verificar se o arquivo de estilo CSS está importado corretamente para evitar erros de estilo
+// Injetar store nos interceptors do axios
+injectStore(store);
 
 const theme = createTheme({
   palette: {
@@ -21,9 +22,8 @@ const theme = createTheme({
 });
 
 // Certifique-se de que 'lg' está inicializada antes de ser usada
-let lg = "some value"; // Inicialize 'lg' aqui
 
-const root = ReactDOM.createRoot(document.getElementById("root")); // Certifique-se de que 'root' está presente no HTML
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
@@ -33,8 +33,3 @@ root.render(
     </Provider>
   </React.StrictMode>
 );
-
-// Use 'lg' depois de inicializá-la
-console.log(lg);
-
-// reportWebVitals(console.log); // Correção: Adicionado 'console.log' para monitorar métricas de desempenho

@@ -22,8 +22,6 @@ import { Add as AddIcon, Email as EmailIcon, WhatsApp as WhatsAppIcon, Edit as E
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import api from '../store/axiosConfig';
-import NavbarLogin from '../components/NavbarLogin';
-import Sidebar from '../components/Sidebar';
 
 const Pacientes = () => {
     const [patients, setPatients] = useState([]);
@@ -31,8 +29,7 @@ const Pacientes = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('todos'); // Define o filtro ativo
     const [sortOption, setSortOption] = useState(''); // Define a opção de ordenação
-    const [showMedicos, setShowMedicos] = useState(false); // Novo estado para controlar se deve mostrar médicos
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Controla a sidebar
+    const [showMedicos, setShowMedicos] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -47,10 +44,6 @@ const Pacientes = () => {
                 applyFilters([]);
             });
     }, []);
-
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
 
     const handleSearchChange = (e) => {
         const term = e.target.value;
@@ -127,12 +120,8 @@ const Pacientes = () => {
     };
 
     return (
-        <div className="flex">
-            <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-            <div className="flex-1" style={{ insetInlineStart: isSidebarOpen ? '240px' : '0' }}>
-                <NavbarLogin />
-                <Container sx={{ paddingBlock: '20px' }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', alignItems: 'center' }}>
+        <Container sx={{ paddingBlock: '20px' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', alignItems: 'center' }}>
                         <Typography variant="h4">Lista de Pacientes</Typography>
                     </Box>
 
@@ -257,11 +246,8 @@ const Pacientes = () => {
                                     </CardContent>
                                 </Card>
                             </Grid>
-                        ))}
-                    </Grid>
-                </Container>
-            </div>
-        </div>
+            </Grid>
+        </Container>
     );
 };
 

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import app from "../config/firebase.config";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import {
   Container,
   TextField,
@@ -73,12 +71,8 @@ const Customization = () => {
   };
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 ml-64">
-        <Header />
-        <Container maxWidth="md">
-          <Box mt={8}>
+    <Container maxWidth="md">
+      <Box mt={4}>
             <Typography variant="h4" component="h1" gutterBottom>
               Personalização
             </Typography>
@@ -117,10 +111,8 @@ const Customization = () => {
                 Atualizar Customização
               </Button>
             </Box>
-          </Box>
-        </Container>
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 };
 

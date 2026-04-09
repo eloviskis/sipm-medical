@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
 import {
   Container,
   Box,
@@ -11,28 +9,22 @@ import {
   Paper,
   Alert,
 } from "@mui/material";
-
-// Configuração do Firebase
-const db = getFirestore();
+import api from "../store/axiosConfig";
 
 const Profile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userId = "user-id"; // Substitua pelo ID do usuário autenticado
-        const docRef = doc(db, "profiles", userId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const profileData = docSnap.data();
-          setName(profileData.name);
-          setEmail(profileData.email);
-        } else {
-          setError("Perfil não encontrado.");
+        const res = await api.get('/profile');
+        if (res.data) {
+          setName(res.data.name || '');
+          setEmail(res.data.email || '');
         }
       } catch (error) {
         console.error("Erro ao buscar dados do perfil:", error);
@@ -45,8 +37,7 @@ const Profile = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const userId = "user-id"; // Substitua pelo ID do usuário autenticado
-      await setDoc(doc(db, "profiles", userId), { name, email });
+      await api.put('/profile', { name, email });
       setMessage("Perfil atualizado com sucesso.");
       setError("");
     } catch (error) {
@@ -57,15 +48,11 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <Box component="main" sx={{ flexGrow: 1, ml: 64 }}>
-        <Header />
-        <Container>
-          <Box sx={{ my: 8 }}>
-            <Typography variant="h3" component="h1" gutterBottom>
-              Perfil
-            </Typography>
+    <Container>
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h3" component="h1" gutterBottom>
+          Perfil
+        </Typography>
             <Paper sx={{ p: 4 }}>
               <form onSubmit={handleUpdate}>
                 <Box sx={{ mb: 4 }}>
@@ -99,11 +86,9 @@ const Profile = () => {
                   Atualizar Perfil
                 </Button>
               </form>
-            </Paper>
-          </Box>
-        </Container>
+        </Paper>
       </Box>
-    </div>
+    </Container>
   );
 };
 
