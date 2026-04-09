@@ -32,7 +32,7 @@ import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-picker
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { SketchPicker } from 'react-color';
 import EditIcon from '@mui/icons-material/Edit';
-import patientsData from '../data/patientsData';
+import api from '../store/axiosConfig';
 import NavbarLogin from '../components/NavbarLogin';
 import Sidebar from '../components/Sidebar';
 
@@ -65,8 +65,14 @@ const Appointment = () => {
   const [editingEventId, setEditingEventId] = useState(null);
   const calendarRef = useRef(null);
 
-  const [patients, setPatients] = useState(patientsData); // Inicialização correta
+  const [patients, setPatients] = useState([]);
   const [newPatientModalOpen, setNewPatientModalOpen] = useState(false);
+
+  useEffect(() => {
+    api.get('/patient-records')
+      .then(res => setPatients(res.data || []))
+      .catch(() => setPatients([]));
+  }, []);
 
   const [newPatient, setNewPatient] = useState({
     nome: '',
@@ -543,7 +549,7 @@ const Appointment = () => {
                   onChange={(e) => setNewEvent({ ...newEvent, modalidade: e.target.value })}
                 >
                   <option value=""></option>
-                  {patientsData.map((patient) => (
+                  {patients.map((patient) => (
                     <option key={patient.id} value={patient.modalidade}>
                       {patient.modalidade}
                     </option>

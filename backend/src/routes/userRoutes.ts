@@ -1,5 +1,7 @@
 import { Request, Response, Router } from 'express';
 import admin from 'firebase-admin';
+import { body, param } from 'express-validator';
+import { validate } from '../middlewares/validate';
 import logger from '../middlewares/logger';
 
 const db = admin.firestore();
@@ -146,10 +148,25 @@ const deleteUser = async (req: Request, res: Response) => {
     }
 };
 
-router.post('/users', createUser);
+router.post('/users', [
+    body('name').trim().notEmpty().withMessage('Nome é obrigatório'),
+    body('email').isEmail().normalizeEmail().withMessage('Email inválido'),
+    body('password').isLength({ min: 6 }).withMessage('Senha deve ter pelo menos 6 caracteres'),
+    body('role').isIn(['Admin', 'Medico', 'Paciente']).withMessage('Role inválido'),
+    body('consent').equals('true').withMessage('Consentimento é obrigatório'),
+], validate, createUser);
+
 router.get('/users', getUsers);
-router.get('/users/:id', getUser);
-router.put('/users/:id', updateUser);
-router.delete('/users/:id', deleteUser);
+router.get('/users/:id', param('id').trim().notEmpty(), validate, getUser);
+
+router.put('/users/:id', [
+    param('id').trim().notEmpty(),
+    body('name').optional().trim().notEmpty(),
+    body('email').optional().isEmail().normalizeEmail(),
+    body('password').optional().isLength({ min: 6 }),
+    body('role').optional().isIn(['Admin', 'Medico', 'Paciente']),
+], validate, updateUser);
+
+router.delete('/users/:id', param('id').trim().notEmpty(), validate, deleteUser);
 
 export default router;

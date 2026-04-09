@@ -2,6 +2,7 @@
 import { Router, Request, Response } from 'express';
 import upload from '../upload';
 import { Firestore } from '@google-cloud/firestore';
+import { verifyFirebaseToken } from '../middlewares/verifyFirebaseToken';
 
 // Inicializar Firestore
 const firestore = new Firestore();
@@ -12,7 +13,7 @@ interface CustomizationBody {
   theme: string;
 }
 
-router.post('/customization', upload.single('favicon'), async (req: Request, res: Response) => {
+router.post('/customization', verifyFirebaseToken, upload.single('favicon'), async (req: Request, res: Response) => {
   try {
     const { theme } = req.body as CustomizationBody;
     let faviconUrl = '';

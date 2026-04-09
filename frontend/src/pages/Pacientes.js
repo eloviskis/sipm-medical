@@ -20,10 +20,10 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Email as EmailIcon, WhatsApp as WhatsAppIcon, Edit as EditIcon, Payment as PaymentIcon, Search as SearchIcon, FileDownload as ExportIcon, Videocam as GoogleMeetIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import * as XLSX from 'xlsx'; // Biblioteca para exportar para Excel
-import patientsData from '../data/patientsData'; // Certifique-se que o arquivo existe com os dados dos pacientes
-import NavbarLogin from '../components/NavbarLogin'; // Importando o NavbarLogin
-import Sidebar from '../components/Sidebar'; // Importando a Sidebar
+import * as XLSX from 'xlsx';
+import api from '../store/axiosConfig';
+import NavbarLogin from '../components/NavbarLogin';
+import Sidebar from '../components/Sidebar';
 
 const Pacientes = () => {
     const [patients, setPatients] = useState([]);
@@ -36,9 +36,16 @@ const Pacientes = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Simula a obtenção dos dados dos pacientes
-        setPatients(patientsData);
-        applyFilters(patientsData); // Aplica os filtros iniciais (sem médicos por padrão)
+        api.get('/patient-records')
+            .then(res => {
+                const data = res.data || [];
+                setPatients(data);
+                applyFilters(data);
+            })
+            .catch(() => {
+                setPatients([]);
+                applyFilters([]);
+            });
     }, []);
 
     const toggleSidebar = () => {

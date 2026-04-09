@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Para navegação
-import { getFirestore } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import api from "../store/axiosConfig";
 import Sidebar from "../components/Sidebar";
 import NavbarLogin from "../components/NavbarLogin";
 import {
@@ -63,6 +63,7 @@ const Dashboard = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [pacientesDoDia, setPacientesDoDia] = useState([]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -70,7 +71,6 @@ const Dashboard = () => {
 
   const handlePeriodChange = (event) => {
     setPeriod(event.target.value);
-    fetchData();
   };
 
   const handleSearchChange = (event) => {
@@ -79,23 +79,18 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const fakeData = {
-        Atendidos: 120,
-        Agendados: 50,
-        Faltou: 10,
-        Remarcou: 5,
-        Cancelou: 3,
-        Pagou: 60,
-        "Não Pagou": 10,
-        Cadastrados: 200,
-        mediaIdade: 35,
-        homens: 100,
-        mulheres: 100,
-        duracaoMediaAtendimento: 30,
-      };
+      const [dashRes, patientsRes] = await Promise.all([
+        api.get('/dashboard', { params: { period } }).catch(() => null),
+        api.get('/patient-records').catch(() => null),
+      ]);
 
-      setStats(fakeData);
-      setData([]);
+      if (dashRes?.data) {
+        setStats(dashRes.data);
+      }
+
+      if (patientsRes?.data) {
+        setPacientesDoDia(patientsRes.data.slice(0, 5));
+      }
     } catch (error) {
       setError("Erro ao buscar dados do painel.");
       console.error("Erro ao buscar dados do painel:", error);
@@ -112,30 +107,8 @@ const Dashboard = () => {
   };
 
   const handlePacientesClick = () => {
-    navigate('/pacientes'); // Navega para a rota /pacientes
-
+    navigate('/pacientes');
   };
-  // Dados fictícios dos pacientes para exibição
-  const pacientesDoDia = [
-    {
-      nome: "Maria Clara Araújo Sena",
-      mae: "Berismar Araújo Sena",
-      nascimento: "20/03/2015 (9 anos)",
-      cpf: "510.560.508-02",
-      sexo: "Feminino",
-      ultimaAtualizacao: "Hoje 10:58",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    },
-    {
-      nome: "Luisa Borges de Souza",
-      mae: "Elizabete Solaine Borges de Souza",
-      nascimento: "15/12/2014 (9 anos)",
-      cpf: "492.952.498-95",
-      sexo: "Feminino",
-      ultimaAtualizacao: "Ontem 11:27",
-      avatar: "https://randomuser.me/api/portraits/women/45.jpg",
-    },
-  ];
 
   return (
     <div className="flex">

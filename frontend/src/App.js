@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { initializeAuthListener } from "./store/authSlice";
+import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -22,59 +25,67 @@ import PlanosPage from "./pages/PlanosPage";
 import Contato from "./pages/Contato";
 import QuemSomos from "./pages/QuemSomos";
 import Pacientes from "./pages/Pacientes";
-import EditarPerfil from "./components/EditarPerfil";  // Importando o componente EditarPerfil
+import EditarPerfil from "./components/EditarPerfil";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-// Configuração do Firebase (local mock via craco aliases)
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "local",
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "localhost",
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "sipm-local",
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { CircularProgress, Box } from "@mui/material";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const { loading, isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-    return unsubscribe;
-  }, []);
+    dispatch(initializeAuthListener());
+  }, [dispatch]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/perfil/:patientId" element={<Perfil />} /> {/* Rota para Perfil com ID do paciente */}
-        <Route path="/editar/:id" element={<EditarPerfil />} /> {/* Rota para Edição de Perfil */}
-        <Route path="/prontuario" element={<Prontuario />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/appointment" element={<Appointment />} />
-        <Route path="/customization" element={<Customization />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/document-templates" element={<DocumentTemplates />} />
-        <Route path="/pre-consultations" element={<PreConsultations />} />
-        <Route path="/motivos" element={<Motivos />} />
-        <Route path="/accounts-receivable" element={<AccountsReceivable />} />
-        <Route path="/accounts-payable" element={<AccountsPayable />} />
-        <Route path="/telemedicina" element={<Telemedicina />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/planos" element={<PlanosPage />} />
-        <Route path="/contato" element={<Contato />} />
-        <Route path="/quem-somos" element={<QuemSomos />} />
-        <Route path="/pacientes" element={<Pacientes />} />
-      </Routes>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
+          <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/planos" element={<PlanosPage />} />
+          <Route path="/contato" element={<Contato />} />
+          <Route path="/quem-somos" element={<QuemSomos />} />
+
+          {/* Protected routes — any authenticated user */}
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/perfil/:patientId" element={<PrivateRoute><Perfil /></PrivateRoute>} />
+          <Route path="/editar/:id" element={<PrivateRoute><EditarPerfil /></PrivateRoute>} />
+          <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+
+          {/* Protected routes — medico, admin, secretaria */}
+          <Route path="/prontuario" element={<PrivateRoute roles={["admin","medico","secretaria"]}><Prontuario /></PrivateRoute>} />
+          <Route path="/appointment" element={<PrivateRoute roles={["admin","medico","secretaria"]}><Appointment /></PrivateRoute>} />
+          <Route path="/pacientes" element={<PrivateRoute roles={["admin","medico","secretaria"]}><Pacientes /></PrivateRoute>} />
+          <Route path="/pre-consultations" element={<PrivateRoute roles={["admin","medico","secretaria"]}><PreConsultations /></PrivateRoute>} />
+          <Route path="/telemedicina" element={<PrivateRoute roles={["admin","medico"]}><Telemedicina /></PrivateRoute>} />
+          <Route path="/document-templates" element={<PrivateRoute roles={["admin","medico"]}><DocumentTemplates /></PrivateRoute>} />
+          <Route path="/motivos" element={<PrivateRoute roles={["admin","medico"]}><Motivos /></PrivateRoute>} />
+          <Route path="/services" element={<PrivateRoute roles={["admin","medico"]}><Services /></PrivateRoute>} />
+
+          {/* Protected routes — admin only */}
+          <Route path="/admin-dashboard" element={<PrivateRoute roles={["admin"]}><AdminDashboard /></PrivateRoute>} />
+          <Route path="/customization" element={<PrivateRoute roles={["admin"]}><Customization /></PrivateRoute>} />
+          <Route path="/accounts-receivable" element={<PrivateRoute roles={["admin","medico","secretaria"]}><AccountsReceivable /></PrivateRoute>} />
+          <Route path="/accounts-payable" element={<PrivateRoute roles={["admin","medico","secretaria"]}><AccountsPayable /></PrivateRoute>} />
+
+          {/* 404 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

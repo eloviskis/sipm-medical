@@ -30,15 +30,16 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import CommentIcon from '@mui/icons-material/Comment';
 import ScaleIcon from '@mui/icons-material/Scale';
 
-import patientsData from '../data/patientsData';
-import escalasData from '../data/escalasData';
+import api from '../store/axiosConfig';
 
 const AgendamentoModal = ({ open, handleClose, selectedDate, eventData }) => {
     const [paciente, setPaciente] = useState(null);
+    const [patientsData, setPatientsData] = useState([]);
     const [servico, setServico] = useState("");
     const [especialidade, setEspecialidade] = useState("");
     const [escala, setEscala] = useState("");
     const [escalas, setEscalas] = useState([]);
+    const [escalasData, setEscalasData] = useState([]);
     const [dataAgendamento, setDataAgendamento] = useState(new Date());
     const [horaAgendamento, setHoraAgendamento] = useState(new Date());
     const [tempoPrevisto, setTempoPrevisto] = useState(15);
@@ -46,6 +47,11 @@ const AgendamentoModal = ({ open, handleClose, selectedDate, eventData }) => {
     const [modalidade, setModalidade] = useState("Presencial");
     const [status, setStatus] = useState("Agendado");
     const [eventLink, setEventLink] = useState(null);
+
+    useEffect(() => {
+        api.get('/patient-records').then(r => setPatientsData(r.data || [])).catch(() => {});
+        api.get('/motivos').then(r => setEscalasData(r.data || [])).catch(() => {});
+    }, []);
 
     useEffect(() => {
         if (selectedDate) {

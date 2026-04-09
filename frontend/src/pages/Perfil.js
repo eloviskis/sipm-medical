@@ -4,8 +4,8 @@ import { useNavigate, useParams } from "react-router-dom"; // Importando usePara
 import ProfileForm from "../components/ProfileForm"; // Componente para pacientes
 import ProfileFormMed from "../components/ProfileFormMed"; // Componente para médicos
 import UserInfoDisplay from "../components/UserInfoDisplay";
-import NavbarLogin from "../components/NavbarLogin"; // Importando NavbarLogin
-import patientsData from "../data/patientsData"; // Importar os dados dos pacientes
+import NavbarLogin from "../components/NavbarLogin";
+import api from "../store/axiosConfig";
 
 const Perfil = () => {
   const { patientId } = useParams(); // Pega o ID do paciente/médico da URL
@@ -23,15 +23,12 @@ const Perfil = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Se não houver ID (novo registro)
         if (!patientId) {
-          setUserData(null); // Nenhum dado, ou seja, criar novo
+          setUserData(null);
         } else {
-          // Encontrar o paciente/médico com base no ID da URL
-          const foundUser = patientsData.find((user) => user.id === parseInt(patientId));
-
-          if (foundUser) {
-            setUserData(foundUser);
+          const res = await api.get(`/patient-records/${patientId}`);
+          if (res.data) {
+            setUserData(res.data);
           } else {
             console.error("Usuário não encontrado");
           }
@@ -44,7 +41,7 @@ const Perfil = () => {
     };
 
     fetchUserData();
-  }, [patientId]); // Executar efeito quando o ID mudar
+  }, [patientId]);
 
   if (loading) {
     return <Typography>Carregando...</Typography>;

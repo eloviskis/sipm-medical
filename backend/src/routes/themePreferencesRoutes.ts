@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import admin from "firebase-admin";
 import logger from "../services/loggingService"; // Usando o novo loggingService
+import { verifyFirebaseToken } from '../middlewares/verifyFirebaseToken';
 
 const router = Router();
 
@@ -17,7 +18,7 @@ interface ThemePreferencesRequest extends Request {
     body: ThemePreferences;
 }
 
-router.put('/update', async (req: ThemePreferencesRequest, res: Response) => {
+router.put('/update', verifyFirebaseToken, async (req: ThemePreferencesRequest, res: Response) => {
     const { userId } = req.params;
     const { primaryColor, secondaryColor, backgroundColor } = req.body;
 

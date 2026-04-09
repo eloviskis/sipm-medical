@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import bodyParser from 'body-parser';
 import appointmentRoutes from './routes/appointmentRoutes';
@@ -46,15 +48,29 @@ try {
 const app = express();
 const port = process.env.PORT || 3001;
 
-// CORS
+// Security headers
+app.use(helmet());
+
+// Rate limiting — 100 requests per 15 minutes per IP
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' },
+});
+app.use('/api/', limiter);
+
+// CORS — restrict to known origins
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',');
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+    origin: allowedOrigins,
     credentials: true,
 }));
 
 // Middlewares
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '1mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
 
 // Rotas
 app.use('/api/appointments', appointmentRoutes);
